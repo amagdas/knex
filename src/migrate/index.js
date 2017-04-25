@@ -343,7 +343,7 @@ export default class Migrator {
         if (!trx && this._useTransaction(migration, disableTransactions)) {
           return this._transaction(migration, direction, name)
         }
-        return warnPromise(migration[direction](trxOrKnex, Promise), name)
+        return warnPromise(migration[direction](trxOrKnex, this.config, Promise), name)
       })
         .then(() => {
           log.push(path.join(directory, name));
@@ -365,7 +365,7 @@ export default class Migrator {
 
   _transaction(migration, direction, name) {
     return this.knex.transaction((trx) => {
-      return warnPromise(migration[direction](trx, Promise), name, () => {
+      return warnPromise(migration[direction](trx, this.config, Promise), name, () => {
         trx.commit()
       })
     })
